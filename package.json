@@ -1,0 +1,26 @@
+{
+  "name": "@superchupu/tusc",
+  "version": "0.1.0",
+  "description": "The ultimate social content video downloader",
+  "type": "module",
+  "bin": {
+    "tusc": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "Superchupu",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "tsx": "^3.12.2",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "yoctocolors": "^1.0.0"
+  },
+  "os": ["win32"],
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
