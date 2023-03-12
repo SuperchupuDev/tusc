@@ -1,8 +1,11 @@
-import { execSync } from 'node:child_process';
+import { exec as _exec } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
-import { blue, bold, red } from 'yoctocolors';
+import { promisify } from 'node:util';
+
+const exec = promisify(_exec);
 
 export async function run(_url: string | null, path: string, openExplorer: boolean) {
+  const { blue, bold, red } = await import('yoctocolors');
   const url = _url?.replace(/https?:\/\//, '').replace('www.', '');
 
   if (!url) {
@@ -15,17 +18,17 @@ export async function run(_url: string | null, path: string, openExplorer: boole
   if (['youtube', 'youtu'].includes(domain)) {
     console.log(`Downloading ${bold(red('YouTube'))} video...`);
     await mkdir(path, { recursive: true });
-    execSync(`yt-dlp https://${url}`, { cwd: path, stdio: 'inherit' });
+    await exec(`yt-dlp https://${url}`, { cwd: path }).then(({ stdout }) => console.log(stdout));
   }
   
   if (['twitter', 't'].includes(domain)) {
     console.log(`Downloading ${bold(blue('Twitter'))} video...`);
     await mkdir(path, { recursive: true });
-    execSync(`yt-dlp https://${url}`, { cwd: path, stdio: 'inherit' });
+    await exec(`yt-dlp https://${url}`, { cwd: path }).then(({ stdout }) => console.log(stdout));
   }
   
   try {
-    if (openExplorer) execSync(`explorer "${path.replaceAll('/', '\\')}"`);
+    if (openExplorer) await exec(`explorer "${path.replaceAll('/', '\\')}"`);
   } catch (_e) {}
 
 }

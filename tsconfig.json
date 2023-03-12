@@ -6,24 +6,15 @@
     "module": "esnext",
     "moduleResolution": "nodenext",
     "baseUrl": "src",
-    "rootDir": "src",
     "resolveJsonModule": true,
 
-    "sourceMap": true,
-    "declaration": true,
-    "outDir": "dist",
     "pretty": true,
     "noEmitOnError": true,
-
-    "paths": {
-      "#*": ["*/index.ts"],
-    },
-
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
 
     "strict": true,
-
     "skipLibCheck": true
-  }
+  },
+  "include": ["src/**/*"]
 }

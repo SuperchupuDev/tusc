@@ -6,4 +6,4 @@ const url = argv[2]?.replace(/https?:\/\//, '').replace('www.', '');
 const path = `${cwd()}/videos`;
 const openExplorer = argv[3] !== '-e';
 
-await run(url, path, openExplorer);
+run(url, path, openExplorer);
