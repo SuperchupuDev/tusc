@@ -41,10 +41,8 @@ async function spawn(
   return new Promise((resolve, reject) => {
     const child = _spawn(command, args, options);
     child.stdout?.setEncoding('utf8');
-    child.stdout?.on('data', (data: string) => {
-      if (data.includes('ERROR:')) {
-        return reject(data);
-      }
+    child.stdout?.on('data', (_data: string | Buffer) => {
+      const data = _data.toString();
       dataCallback?.(data) ?? console.log(data);
     });
     child.stderr?.setEncoding('utf8');
