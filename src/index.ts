@@ -9,7 +9,7 @@ export interface TuscOptions {
   ytDlpPath?: string;
   extension?: Extension;
   resolution?: number | 'best';
-  dataCallback?: (data: unknown) => unknown;
+  onData?: (data: string) => unknown;
 }
 
 export type Extension = 'mp4' | 'mp3' | 'webm' | '3gp' | 'm4a' | 'ogg' | 'wav';
@@ -36,14 +36,14 @@ async function spawn(
   command: string,
   args: readonly string[],
   options: SpawnOptions,
-  dataCallback?: (data: unknown) => unknown
+  onData?: (data: string) => unknown
 ) {
   return new Promise((resolve, reject) => {
     const child = _spawn(command, args, options);
     child.stdout?.setEncoding('utf8');
     child.stdout?.on('data', (_data: string | Buffer) => {
       const data = _data.toString();
-      dataCallback?.(data) ?? console.log(data);
+      onData?.(data) ?? console.log(data);
     });
     child.stderr?.setEncoding('utf8');
     child.stderr?.on('data', reject);
@@ -59,7 +59,7 @@ export async function run({
   ytDlpPath = defaultYtDlpPath,
   extension = 'mp4',
   resolution = 1080,
-  dataCallback
+  onData
 }: TuscOptions) {
   const url = _url?.replace(/https?:\/\//, '').replace('www.', '');
 
@@ -71,7 +71,7 @@ export async function run({
   await mkdir(path, { recursive: true });
 
   const format = getFormat(extension, resolution);
-  await spawn(ytDlpPath, [`https://${url}`, ...format], { cwd: path, stdio: 'inherit' }, dataCallback);
+  await spawn(ytDlpPath, [`https://${url}`, ...format], { cwd: path, stdio: 'inherit' }, onData);
 
   try {
     if (openExplorer) await spawn('explorer', [path.replaceAll('/', '\\')], { stdio: 'inherit' });
