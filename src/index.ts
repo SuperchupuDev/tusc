@@ -10,6 +10,7 @@ export interface TuscOptions {
   extension?: Extension;
   resolution?: number | 'best';
   onData?: (data: string) => unknown;
+  onErrorData?: (data: string) => unknown;
 }
 
 export type Extension = 'mp4' | 'mp3' | 'webm' | '3gp' | 'm4a' | 'ogg' | 'wav';
@@ -36,7 +37,8 @@ async function spawn(
   command: string,
   args: readonly string[],
   options: SpawnOptions,
-  onData?: (data: string) => unknown
+  onData?: TuscOptions['onData'],
+  onErrorData?: TuscOptions['onErrorData']
 ) {
   return new Promise((resolve, reject) => {
     const child = _spawn(command, args, options);
@@ -45,9 +47,12 @@ async function spawn(
       const data = _data.toString();
       onData?.(data) ?? console.log(data);
     });
+
     child.stderr?.setEncoding('utf8');
-    child.stderr?.on('data', reject);
-    child.on('error', reject);
+    child.stderr?.on('data', (_data: string | Buffer) => {
+      const data = _data.toString();
+      onErrorData?.(data) ?? console.error(data);
+    });
     child.on('close', code => (code === 0 ? resolve(code) : reject(code)));
   });
 }
@@ -59,7 +64,8 @@ export async function run({
   ytDlpPath = defaultYtDlpPath,
   extension = 'mp4',
   resolution = 1080,
-  onData
+  onData,
+  onErrorData
 }: TuscOptions) {
   const url = _url?.replace(/https?:\/\//, '').replace('www.', '');
 
@@ -71,7 +77,7 @@ export async function run({
   await mkdir(path, { recursive: true });
 
   const format = getFormat(extension, resolution);
-  await spawn(ytDlpPath, [`https://${url}`, ...format], { cwd: path, stdio: 'inherit' }, onData);
+  await spawn(ytDlpPath, [`https://${url}`, ...format], { cwd: path }, onData, onErrorData);
 
   try {
     if (openExplorer) await spawn('explorer', [path.replaceAll('/', '\\')], { stdio: 'inherit' });
