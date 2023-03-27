@@ -73,7 +73,7 @@ export async function run({
     return null;
   }
 
-  console.log(`Downloading video...`);
+  console.log('Downloading video...');
   await mkdir(path, { recursive: true });
 
   const format = getFormat(extension, resolution);
