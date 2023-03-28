@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 import { argv, cwd } from 'node:process';
 import { run, update } from './index.js';
-
 const url = argv[2];
 const path = `${cwd()}/videos`;
 const openExplorer = !argv.includes('-e');
-
 if (!url.trim()) {
   (async () => {
     const { blue } = await import('yoctocolors');

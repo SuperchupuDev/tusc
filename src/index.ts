@@ -1,4 +1,4 @@
-import { spawn as _spawn, type SpawnOptions } from 'node:child_process';
+import { spawn as _spawn, type SpawnOptions, exec, execSync } from 'node:child_process';
 import path from 'node:path';
 import { mkdir } from 'node:fs/promises';
 
@@ -15,7 +15,7 @@ export interface TuscOptions {
 
 export type Extension = 'mp4' | 'mp3' | 'webm' | '3gp' | 'm4a' | 'ogg' | 'wav';
 
-export const defaultYtDlpPath = path.resolve('./yt-dlp.exe');
+export const defaultYtDlpPath = process.platform === "win32" ? path.resolve('./yt-dlp.exe') : "yt-dlp";
 
 export const audioFormats = ['m4a', 'mp3', 'ogg', 'wav'];
 
@@ -67,6 +67,15 @@ export async function run({
   onData,
   onErrorData
 }: TuscOptions) {
+  if (process.platform === 'linux') {
+    try {
+      execSync('yt-dlp --version');
+    }
+    catch {
+      console.error('yt-dlp is not installed. Please install it via your package manager of choice.');
+      process.exit(1)
+    }
+  }
   const url = _url?.replace(/https?:\/\//, '').replace('www.', '');
 
   if (!url) {
@@ -80,7 +89,7 @@ export async function run({
   await spawn(ytDlpPath, [`https://${url}`, ...format], { cwd: path }, onData, onErrorData);
 
   try {
-    if (openExplorer) await spawn('explorer', [path.replaceAll('/', '\\')], { stdio: 'inherit' });
+    if (openExplorer) process.platform === 'linux' ? await spawn('xdg-open', [path], {stdio: 'inherit'}) : await spawn('explorer', [path.replaceAll('/', '\\')], { stdio: 'inherit' });
   } catch {}
 
   return true;

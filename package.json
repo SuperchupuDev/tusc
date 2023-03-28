@@ -18,7 +18,6 @@
   ],
   "scripts": {
     "build": "tsup",
-    "postinstall": "curl -L -k https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe > dist/yt-dlp.exe",
     "format": "prettier --write .",
     "check": "prettier --check .",
     "typecheck": "tsc --noEmit"
@@ -34,9 +33,6 @@
   "dependencies": {
     "yoctocolors": "^1.0.0"
   },
-  "os": [
-    "win32"
-  ],
   "engines": {
     "node": ">=16.0.0"
   }
