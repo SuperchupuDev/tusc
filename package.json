@@ -24,12 +24,12 @@
     "typecheck": "tsc --noEmit"
   },
   "author": "Superchupu",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "^18.15.10",
+    "@types/node": "^18.15.11",
     "prettier": "^2.8.7",
     "tsup": "^6.7.0",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.3"
   },
   "dependencies": {
     "yoctocolors": "^1.0.0"
