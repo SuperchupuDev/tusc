@@ -1,6 +1,8 @@
 import { spawn as _spawn, type SpawnOptions } from 'node:child_process';
-import path from 'node:path';
 import { mkdir } from 'node:fs/promises';
+import path from 'node:path';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 export interface TuscOptions {
   url: string | null;
@@ -15,7 +17,9 @@ export interface TuscOptions {
 
 export type Extension = 'mp4' | 'mp3' | 'webm' | '3gp' | 'm4a' | 'ogg' | 'wav';
 
-export const defaultYtDlpPath = path.resolve('./yt-dlp.exe');
+const dirname = typeof __dirname === 'undefined' ? path.dirname(fileURLToPath(import.meta.url)) : __dirname;
+
+export const defaultYtDlpPath = path.join(dirname, process.platform === 'win32' ? './yt-dlp.exe' : './yt-dlp');
 
 export const audioFormats = ['m4a', 'mp3', 'ogg', 'wav'];
 
@@ -53,7 +57,9 @@ async function spawn(
       const data = _data.toString();
       onErrorData?.(data) ?? console.error(data);
     });
-    child.on('close', code => (code === 0 ? resolve(code) : reject(code)));
+
+    child.on('error', reject);
+    child.on('close', code => code === 0 && resolve(code));
   });
 }
 
@@ -79,9 +85,22 @@ export async function run({
   const format = getFormat(extension, resolution);
   await spawn(ytDlpPath, [`https://${url}`, ...format], { cwd: path }, onData, onErrorData);
 
-  try {
-    if (openExplorer) await spawn('explorer', [path.replaceAll('/', '\\')], { stdio: 'inherit' });
-  } catch {}
+  if (openExplorer) {
+    let explorer: string;
+    switch (process.platform) {
+      case 'linux':
+        explorer = 'xdg-open';
+        break;
+      case 'win32':
+        explorer = 'explorer';
+        break;
+      default:
+        explorer = 'open';
+        break;
+    }
+
+    await spawn(explorer, [path], { stdio: 'inherit' }).catch(() => null);
+  }
 
   return true;
 }

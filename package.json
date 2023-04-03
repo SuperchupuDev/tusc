@@ -1,6 +1,6 @@
 {
   "name": "@superchupu/tusc",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "The ultimate social content video downloader",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "build": "tsup",
-    "postinstall": "curl -L -k https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe > dist/yt-dlp.exe",
+    "postinstall": "node ./scripts/postinstall.mjs",
     "format": "prettier --write .",
     "check": "prettier --check .",
     "typecheck": "tsc --noEmit"
@@ -34,9 +34,6 @@
   "dependencies": {
     "yoctocolors": "^1.0.0"
   },
-  "os": [
-    "win32"
-  ],
   "engines": {
     "node": ">=16.0.0"
   }

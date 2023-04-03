@@ -12,8 +12,6 @@ It's on an early stage with a lot of changes expected to happen, if you want som
 npm i -g @superchupu/tusc
 ```
 
-Windows is the only supported platform for now
-
 ## Usage
 
 ```bash
