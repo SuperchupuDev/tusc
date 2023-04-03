@@ -59,7 +59,7 @@ async function spawn(
     });
 
     child.on('error', reject);
-    child.on('close', code => code === 0 && resolve(code));
+    child.on('close', code => (code === 0 ? resolve(code) : reject(code)));
   });
 }
 
@@ -99,7 +99,9 @@ export async function run({
         break;
     }
 
-    await spawn(explorer, [path], { stdio: 'inherit' }).catch(() => null);
+    await spawn(explorer, [process.platform === 'win32' ? path.replaceAll('/', '\\') : path], {
+      stdio: 'inherit'
+    }).catch(() => null);
   }
 
   return true;
