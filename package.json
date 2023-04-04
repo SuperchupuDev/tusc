@@ -1,6 +1,6 @@
 {
   "name": "@superchupu/tusc",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "The ultimate social content video downloader",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

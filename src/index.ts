@@ -11,6 +11,7 @@ export interface TuscOptions {
   ytDlpPath?: string;
   extension?: Extension;
   resolution?: number | 'best';
+  additionalFlags?: string[];
   onData?: (data: string) => unknown;
   onErrorData?: (data: string) => unknown;
 }
@@ -70,6 +71,7 @@ export async function run({
   ytDlpPath = defaultYtDlpPath,
   extension = 'mp4',
   resolution = 1080,
+  additionalFlags = [],
   onData,
   onErrorData
 }: TuscOptions) {
@@ -83,7 +85,7 @@ export async function run({
   await mkdir(path, { recursive: true });
 
   const format = getFormat(extension, resolution);
-  await spawn(ytDlpPath, [`https://${url}`, ...format], { cwd: path }, onData, onErrorData);
+  await spawn(ytDlpPath, [`https://${url}`, ...additionalFlags, ...format], { cwd: path }, onData, onErrorData);
 
   if (openExplorer) {
     let explorer: string;
